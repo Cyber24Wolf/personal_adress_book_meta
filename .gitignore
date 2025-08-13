@@ -1,6 +1,24 @@
+# Rider and Visual Studio cached data
+.idea/
+.vs/
+*.sln.DotSettings
+*.suo
+*.user
+*.userprefs
+*.vspscc
+
+# Binaries, packages, and build cache
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
-.idea/
+*.nupkg
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+
+# Temporary files
+**/*.tmp
+**/*.log
+
+# Other files
+*.csproj.user
+*.csproj.user.*
