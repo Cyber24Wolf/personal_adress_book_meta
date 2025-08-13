@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "personal_adress_book_meta", "personal_adress_book_meta.csproj", "{7B83DFCD-65D4-4ADF-B2E0-372C6096532C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonalAdressBookMeta", "PersonalAdressBookMeta.csproj", "{7B83DFCD-65D4-4ADF-B2E0-372C6096532C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
