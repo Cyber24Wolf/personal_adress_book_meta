@@ -68,6 +68,9 @@ public class ContactsController(AppDbContext db, IWebHostEnvironment env) : Cont
         if (id <= 0)
             return BadRequest("Id must be > 0");
         
+        if (dto.Photo != null && !IsPhotoFile(dto.Photo))
+            return BadRequest("Invalid photo format. Supports: .jpg, .jpeg, .png");
+        
         var contact = await db.Contacts.FindAsync(id);
         if (contact == null)
             return NotFound();
@@ -104,18 +107,48 @@ public class ContactsController(AppDbContext db, IWebHostEnvironment env) : Cont
 
     private static async Task<string?> SavePhotoIfPresent(IFormFile? file, IWebHostEnvironment env)
     {
-        if (file is null || file.Length == 0) 
+        if (file == null || file.Length == 0)
             return null;
+        
+        if (!IsPhotoFile(file))
+            throw new InvalidOperationException("Wrong image format. Support only: .jpg, .jpeg, .png");
 
-        var wwwroot = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        var photosDir = Path.Combine(wwwroot, "photos");
-        Directory.CreateDirectory(photosDir);
+        var extension = GetPhotoFileExtension(file);
+        var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+        var uploadsFolder = Path.Combine("wwwroot", "uploads");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
 
-        var name = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-        var path = Path.Combine(photosDir, name);
-        await using var stream = System.IO.File.Create(path);
+        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+        await using var stream = System.IO.File.Create(filePath);
         await file.CopyToAsync(stream);
 
-        return $"/photos/{name}";
+        return $"/uploads/{uniqueFileName}";
+    }
+
+    private static bool IsPhotoFile(IFormFile? file)
+    {
+        if (file == null)
+            return false;
+        
+        var extension = GetPhotoFileExtension(file);
+        if (extension == string.Empty)
+            return false;
+
+        return extension == ".jpg"  || 
+               extension == ".jpeg" ||
+               extension == ".png";
+    }
+
+    private static string GetPhotoFileExtension(IFormFile? file)
+    {
+        if (file == null)
+            return string.Empty;
+        
+        var extension = Path.GetExtension(file.FileName); 
+        if  (string.IsNullOrEmpty(extension))
+            return string.Empty;
+
+        return extension.ToLower();
     }
 }
